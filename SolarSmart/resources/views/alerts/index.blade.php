@@ -1,0 +1,135 @@
+@extends('layouts.app')
+
+@section('title', 'Alerts')
+
+@section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Alerts</h1>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <h3 class="mb-1">{{ $stats['total'] }}</h3>
+            <small class="text-muted">Total Alerts</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <h3 class="mb-1 text-danger">{{ $stats['active'] }}</h3>
+            <small class="text-muted">Active</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <h3 class="mb-1 text-warning">{{ $stats['critical'] }}</h3>
+            <small class="text-muted">Critical</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <h3 class="mb-1 text-success">{{ $stats['resolved'] }}</h3>
+            <small class="text-muted">Resolved</small>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-exclamation-triangle me-2"></i>All Alerts
+    </div>
+    <div class="card-body p-0">
+        @if($alerts->count() > 0)
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Title</th>
+                            <th>System</th>
+                            <th>Severity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($alerts as $alert)
+                            <tr>
+                                <td>{{ $alert->triggered_at->format('M d, Y H:i') }}</td>
+                                <td>{{ $alert->typeLabel() }}</td>
+                                <td>{{ $alert->title }}</td>
+                                <td>{{ $alert->solarSystem->name }}</td>
+                                <td>
+                                    <span class="badge bg-{{ $alert->severityColor() }}">
+                                        {{ ucfirst($alert->severity) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ $alert->statusBadge() }}">
+                                        {{ ucfirst($alert->status) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ route('alerts.show', $alert) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    @if($alert->status === 'active')
+                                        <form action="{{ route('alerts.acknowledge', $alert) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Acknowledge">
+                                                <i class="bi bi-check"></i>
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#resolveModal{{ $alert->id }}" title="Resolve">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                        <!-- Resolve Modal -->
+                                        <div class="modal fade" id="resolveModal{{ $alert->id }}" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Resolve Alert</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <form action="{{ route('alerts.resolve', $alert) }}" method="POST">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="modal-body">
+                                                            <p>You are resolving this alert: <strong>{{ $alert->title }}</strong></p>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Resolution Notes (optional)</label>
+                                                                <textarea name="resolution_notes" class="form-control" rows="3" placeholder="Describe how this issue was resolved..."></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                            <button type="submit" class="btn btn-success">
+                                                                <i class="bi bi-check-circle me-1"></i>Resolve
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-3">
+                {{ $alerts->links() }}
+            </div>
+        @else
+            <div class="text-center py-5">
+                <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">No Alerts</h5>
+                <p class="text-muted">Your systems are running smoothly</p>
+            </div>
+        @endif
+    </div>
+</div>
+@endsection

@@ -1,0 +1,56 @@
+﻿@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Panels - {{ $solarSystem->name }}</h1>
+        <a href="{{ route('solar-systems.panels.create', $solarSystem) }}" class="btn btn-primary">
+            Add Panel
+        </a>
+    </div>
+
+    @if($panels->isEmpty())
+        <div class="alert alert-info">
+            No panels found. Add your first panel to start monitoring.
+        </div>
+    @else
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Serial Number</th>
+                            <th>Model</th>
+                            <th>Manufacturer</th>
+                            <th>Capacity (Watts)</th>
+                            <th>Status</th>
+                            <th>Alerts</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($panels as $panel)
+                        <tr>
+                            <td>{{ $panel->serial_number }}</td>
+                            <td>{{ $panel->model }}</td>
+                            <td>{{ $panel->manufacturer }}</td>
+                            <td>{{ $panel->capacity_watts }}W</td>
+                            <td>
+                                <span class="badge bg-{{ $panel->status === 'active' ? 'success' : 'secondary' }}">
+                                    {{ $panel->status }}
+                                </span>
+                            </td>
+                            <td>{{ $panel->alerts_count }}</td>
+                            <td>
+                                <a href="{{ route('solar-systems.panels.show', [$solarSystem, $panel]) }}" class="btn btn-sm btn-info">View</a>
+                                <a href="{{ route('solar-systems.panels.edit', [$solarSystem, $panel]) }}" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+</div>
+@endsection

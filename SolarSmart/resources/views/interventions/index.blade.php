@@ -1,0 +1,84 @@
+@extends('layouts.app')
+
+@section('title', 'Interventions')
+
+@section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Interventions</h1>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-tools me-2"></i>All Interventions
+    </div>
+    <div class="card-body p-0">
+        @if($interventions->count() > 0)
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Solar System</th>
+                            <th>Technician</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($interventions as $intervention)
+                            <tr>
+                                <td>{{ $intervention->scheduled_date->format('M d, Y') }}</td>
+                                <td>{{ $intervention->typeLabel() }}</td>
+                                <td>{{ $intervention->solarSystem->name }}</td>
+                                <td>{{ $intervention->technician->name }}</td>
+                                <td>
+                                    <span class="badge bg-{{ $intervention->priorityColor() }}">
+                                        {{ ucfirst($intervention->priority) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ $intervention->statusBadge() }}">
+                                        {{ ucfirst($intervention->status) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ route('interventions.show', $intervention) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    @if($intervention->status === 'scheduled')
+                                        <form action="{{ route('interventions.start', $intervention) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Start">
+                                                <i class="bi bi-play"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                    @if($intervention->status === 'in_progress')
+                                        <form action="{{ route('interventions.complete', $intervention) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Complete">
+                                                <i class="bi bi-check-circle"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-3">
+                {{ $interventions->links() }}
+            </div>
+        @else
+            <div class="text-center py-5">
+                <i class="bi bi-tools text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">No Interventions</h5>
+                <p class="text-muted">No maintenance interventions scheduled</p>
+            </div>
+        @endif
+    </div>
+</div>
+@endsection
