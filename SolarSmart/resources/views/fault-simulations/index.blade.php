@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
         triggerBtn.disabled = true;
         triggerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Triggering...';
 
-        fetch('/api/fault-simulations', {
+        fetch('{{ route('fault-simulations.quick-trigger') }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -246,11 +246,15 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(function(response) { 
             if (!response.ok) {
-                return response.text().then(text => {
+                return response.text().then(function(text) {
+                    console.error('HTTP Error:', response.status, text);
                     throw new Error('HTTP ' + response.status + ': ' + (text ? text.substring(0, 200) : 'Unknown error'));
                 });
             }
-            return response.json(); 
+            return response.json().catch(function(e) {
+                console.error('JSON parse error:', e);
+                throw new Error('Invalid JSON response');
+            });
         })
         .then(function(data) {
             if (data.success) {
@@ -263,7 +267,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(function(err) {
-            alert('Request failed: ' + err.message);
+            console.error('Fetch error:', err);
+            alert('Request failed: ' + (err.message || 'Unknown error') + '\n\nCheck browser console for details');
             triggerBtn.disabled = false;
             triggerBtn.innerHTML = '<i class="bi bi-bug-fill me-2"></i>Trigger Fault Simulation';
         });

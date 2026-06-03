@@ -103,7 +103,7 @@ class FaultSimulationController extends Controller
                 ],
                 'alert_id' => $faultSimulation->generated_alert_id,
                 'intervention_id' => $faultSimulation->generated_intervention_id,
-            ]);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
