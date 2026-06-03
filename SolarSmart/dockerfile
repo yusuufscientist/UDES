@@ -1,45 +1,19 @@
 FROM php:8.2-fpm
 
-# تثبيت حزم النظام الأساسية، Nginx، بالإضافة إلى Node.js و NPM لبناء الـ Assets
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    nginx \
-    nodejs \
-    npm
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip nginx
 
-# تنظيف الكاش
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# تثبيت إضافات PHP لـ Laravel و MySQL
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# تثبيت Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
-
-# نسخ ملفات المشروع داخل السيرفر
 COPY . /var/www
 
-# تثبيت مكتبات Composer للإنتاج
 RUN composer install --no-dev --optimize-autoloader --no-interaction
-
-# تثبيت حزم NPM وبناء ملفات الـ CSS والـ JS (Vite / Tailwind)
-RUN npm install && npm run build
-
-# ضبط الصلاحيات لمجلدات السيرفر
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# نسخ إعدادات Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
-
-# تشغيل الـ Migrations تلقائياً عند إقلاع الحاوية ثم تشغيل PHP-FPM و Nginx معاً في الواجهة
 CMD php artisan migrate --force && php-fpm -D && nginx -g "daemon off;"
