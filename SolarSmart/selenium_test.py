@@ -64,7 +64,9 @@ class SolarSmartSeleniumTest:
         password_input.send_keys(password)
         
         # Submit: button[type='submit']
-        submit_btn = self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
+        submit_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'Sign In') or @type='submit']")))
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
+        time.sleep(0.5)
         submit_btn.click()
         
         # Wait for dashboard redirect
