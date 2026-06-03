@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('solar_system_id')->constrained()->onDelete('cascade');
             $table->foreignId('panel_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('technician_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('technician_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('alert_id')->nullable()->constrained()->onDelete('set null');
             $table->enum('type', ['routine_maintenance', 'repair', 'inspection', 'cleaning', 'emergency_repair']);
             $table->text('description');
