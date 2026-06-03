@@ -30,6 +30,7 @@ Route::post('/solar-systems', [SolarSystemController::class, 'store'])->name('so
 Route::get('/solar-systems/{solar_system}', [SolarSystemController::class, 'show'])->name('solar-systems.show');
 Route::get('/solar-systems/{solar_system}/edit', [SolarSystemController::class, 'edit'])->name('solar-systems.edit');
 Route::put('/solar-systems/{solar_system}', [SolarSystemController::class, 'update'])->name('solar-systems.update');
+Route::delete('/solar-systems/{solar_system}', [SolarSystemController::class, 'destroy'])->name('solar-systems.destroy');
 Route::get('/weather', [WeatherController::class, 'index'])->name('weather.index');
 
 Route::get('/panels', function () {
