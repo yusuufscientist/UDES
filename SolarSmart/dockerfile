@@ -1,19 +1,30 @@
 FROM php:8.2-fpm
 
+# 1. تثبيت الحزم الأساسية (بدون Node.js لأننا بنينا الـ Assets محلياً)
 RUN apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev zip unzip nginx
 
+# 2. تثبيت إضافات PHP الضرورية
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
+# 3. تثبيت Composer من النسخة الرسمية
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# 4. إعداد مجلد العمل
 WORKDIR /var/www
 COPY . /var/www
 
+# 5. تثبيت حزم PHP (بدون dev لتقليل الحجم)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# 6. ضبط الصلاحيات (مهم جداً للـ Storage)
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
+# 7. نسخ إعدادات Nginx
 COPY nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
+
+# 8. أمر التشغيل النهائي
+# تأكد أن `php artisan migrate` ما راحش يحبس الـ Container إذا كانت الداتا بيس واجدة
 CMD php artisan migrate --force && php-fpm -D && nginx -g "daemon off;"
