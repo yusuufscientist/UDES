@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
         triggerBtn.disabled = true;
         triggerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Triggering...';
 
-        fetch('{{ route('fault-simulations.quick-trigger') }}', {
+        fetch('/api/fault-simulations', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -258,7 +258,8 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(function(data) {
             if (data.success) {
-                alert('Fault Simulation Successful!\n\nPanel: ' + data.panel.serial_number + '\nFault: ' + data.fault.label + '\nSeverity: ' + data.fault.severity + '\n\nAlert #' + data.alert_id + ' and Intervention #' + data.intervention_id + ' have been automatically created.');
+                const responseData = data.data || data;
+                alert('Fault Simulation Successful!\n\nPanel: ' + responseData.panel.serial_number + '\nFault: ' + responseData.fault.label + '\nSeverity: ' + responseData.fault.severity + '\n\nAlert #' + responseData.alert_id + ' and Intervention #' + responseData.intervention_id + ' have been automatically created.');
                 window.location.reload();
             } else {
                 alert('Error: ' + (data.message || 'Unknown error occurred'));
