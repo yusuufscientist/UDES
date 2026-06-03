@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(data) {
             if (data.success) {
                 const responseData = data.data || data;
-                alert('Fault Simulation Successful!\n\nPanel: ' + responseData.panel.serial_number + '\nFault: ' + responseData.fault.label + '\nSeverity: ' + responseData.fault.severity + '\n\nAlert #' + responseData.alert_id + ' and Intervention #' + responseData.intervention_id + ' have been automatically created.');
+                alert('Fault Simulation Successful!\n\nPanel: ' + (responseData.panel?.serial_number || 'N/A') + '\nFault: ' + (responseData.fault?.label || 'N/A') + '\nSeverity: ' + (responseData.fault?.severity || 'N/A') + '\n\nAlert #' + (responseData.alert_id || 'N/A') + ' and Intervention #' + (responseData.intervention_id || 'N/A') + ' have been automatically created.');
                 window.location.reload();
             } else {
                 alert('Error: ' + (data.message || 'Unknown error occurred'));
