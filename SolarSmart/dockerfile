@@ -36,4 +36,5 @@ COPY nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
-CMD service nginx start && php-fpm
+# تشغيل الـ Migrations تلقائياً عند إقلاع الحاوية ثم تشغيل PHP-FPM و Nginx معاً في الواجهة
+CMD php artisan migrate --force && php-fpm -D && nginx -g "daemon off;"
