@@ -178,6 +178,14 @@ class FaultSimulationService
             $technician = User::where('is_active', true)->first();
         }
 
+        if (! $technician) {
+            $technician = User::first();
+        }
+
+        if (! $technician) {
+            throw new \RuntimeException('No users available in the system to assign the intervention');
+        }
+
         $title = self::FAULT_TYPES[$faultType]['label'];
 
         return Intervention::create([

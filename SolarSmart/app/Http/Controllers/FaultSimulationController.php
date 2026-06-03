@@ -82,27 +82,34 @@ class FaultSimulationController extends Controller
             'fault_type' => 'required|in:inverter_failure,panel_crack,wiring_fault,sensor_malfunction,hot_spot,delamination,connection_failure,soiling_severe,shading_issue,ground_fault',
         ]);
 
-        $panel = Panel::with('solarSystem')->findOrFail($validated['panel_id']);
+        try {
+            $panel = Panel::with('solarSystem')->findOrFail($validated['panel_id']);
 
-        $faultSimulation = $this->service->triggerFault($panel, $validated['fault_type'], $this->currentUserId());
+            $faultSimulation = $this->service->triggerFault($panel, $validated['fault_type'], $this->currentUserId());
 
-        return response()->json([
-            'success' => true,
-            'message' => "Fault triggered: {$faultSimulation->faultTypeLabel()}",
-            'panel' => [
-                'id' => $panel->id,
-                'serial_number' => $panel->serial_number,
-                'status' => 'inactive',
-            ],
-            'fault' => [
-                'id' => $faultSimulation->id,
-                'type' => $faultSimulation->fault_type,
-                'label' => $faultSimulation->faultTypeLabel(),
-                'severity' => $faultSimulation->severity,
-            ],
-            'alert_id' => $faultSimulation->generated_alert_id,
-            'intervention_id' => $faultSimulation->generated_intervention_id,
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => "Fault triggered: {$faultSimulation->faultTypeLabel()}",
+                'panel' => [
+                    'id' => $panel->id,
+                    'serial_number' => $panel->serial_number,
+                    'status' => 'inactive',
+                ],
+                'fault' => [
+                    'id' => $faultSimulation->id,
+                    'type' => $faultSimulation->fault_type,
+                    'label' => $faultSimulation->faultTypeLabel(),
+                    'severity' => $faultSimulation->severity,
+                ],
+                'alert_id' => $faultSimulation->generated_alert_id,
+                'intervention_id' => $faultSimulation->generated_intervention_id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function resolve(FaultSimulation $faultSimulation)
