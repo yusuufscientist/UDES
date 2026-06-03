@@ -16,11 +16,7 @@ class RoleMiddleware
         $user = auth()->user();
 
         if (! $user) {
-            $user = \App\Models\User::where('email', 'fcyusuuf@gmail.com')->first();
-        }
-
-        if (! $user) {
-            $user = \App\Models\User::first();
+            $user = \App\Models\User::where('email', 'fcyusuuf@gmail.com')->first() ?? \App\Models\User::first();
         }
 
         abort_if(! $user, 403, 'Unauthorized access.');
