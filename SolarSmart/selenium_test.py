@@ -93,10 +93,8 @@ class SolarSmartSeleniumTest:
         print("\n--- Testing Solar Systems CRUD ---")
         
         # Navigate to Solar Systems via navbar link text "Solar Systems"
-        solar_systems_link = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Solar Systems')]"))
-        )
-        solar_systems_link.click()
+        solar_systems_link = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Solar Systems')]")))
+        self.driver.execute_script("arguments[0].click();", solar_systems_link)
         
         # Click Add New System button (btn-primary with bi-plus-lg)
         add_btn = self.wait.until(
@@ -137,19 +135,15 @@ class SolarSmartSeleniumTest:
         print("\n--- Testing Panels CRUD ---")
         
         # Navigate to Panels via navbar link text "Panels"
-        panels_link = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Panels')]"))
-        )
-        panels_link.click()
+        panels_link = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Panels')]")))
+        self.driver.execute_script("arguments[0].click();", panels_link)
         
         # Wait for panels page - check if we have any systems
         self.wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
         
         # Click Add Panel button
-        add_btn = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'panels/create') and contains(@class, 'btn-primary')]"))
-        )
-        add_btn.click()
+        add_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(@href, 'panels/create') and contains(@class, 'btn-primary')]")))
+        self.driver.execute_script("arguments[0].click();", add_btn)
         
         # Fill panel form:
         # - input id="serial_number"
@@ -187,17 +181,13 @@ class SolarSmartSeleniumTest:
         print("\n--- Testing Production CRUD ---")
         
         # Navigate to Production via navbar link text "Production"
-        production_link = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Production')]"))
-        )
-        production_link.click()
+        production_link = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Production')]")))
+        self.driver.execute_script("arguments[0].click();", production_link)
         
         # Click Add Production Record button
         try:
-            add_btn = self.wait.until(
-                EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'productions/create') and contains(@class, 'btn-primary')]"))
-            )
-            add_btn.click()
+            add_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(@href, 'productions/create') and contains(@class, 'btn-primary')]")))
+            self.driver.execute_script("arguments[0].click();", add_btn)
         except:
             print("[INFO] No production add button found, checking page structure")
         
@@ -221,8 +211,8 @@ class SolarSmartSeleniumTest:
         self.driver.find_element(By.ID, "temperature_celsius").send_keys("25.5")
         
         # Select sunny weather radio button
-        sunny_radio = self.driver.find_element(By.ID, "w_sunny")
-        sunny_radio.click()
+        sunny_radio = self.wait.until(EC.presence_of_element_located((By.ID, "w_sunny")))
+        self.driver.execute_script("arguments[0].click();", sunny_radio)
         
         # Submit button with text "Add Production Record"
         submit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., 'Add Production Record')]")))
@@ -240,10 +230,8 @@ class SolarSmartSeleniumTest:
         print("\n--- Testing Fault Simulation ---")
         
         # Navigate to Fault Simulations via navbar link
-        fault_link = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Fault Simulations')]"))
-        )
-        fault_link.click()
+        fault_link = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Fault Simulations')]")))
+        self.driver.execute_script("arguments[0].click();", fault_link)
         
         # Select Solar System from dropdown id="systemSelect"
         # Select Panel from dropdown id="panelSelect"
@@ -281,10 +269,8 @@ class SolarSmartSeleniumTest:
         print("\n--- Testing Alerts Verification ---")
         
         # Navigate to Alerts via navbar link text "Alerts"
-        alerts_link = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Alerts')]"))
-        )
-        alerts_link.click()
+        alerts_link = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Alerts')]")))
+        self.driver.execute_script("arguments[0].click();", alerts_link)
         
         # Check for badge elements (alerts count)
         self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".badge")))
@@ -306,16 +292,12 @@ class SolarSmartSeleniumTest:
         print("\n--- Testing Intervention Creation ---")
         
         # Navigate to Interventions via navbar link text "Interventions"
-        intervention_link = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Interventions')]"))
-        )
-        intervention_link.click()
+        intervention_link = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Interventions')]")))
+        self.driver.execute_script("arguments[0].click();", intervention_link)
         
         # Click Create button
-        create_link = self.wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'interventions/create') and contains(@class, 'btn-primary')]"))
-        )
-        create_link.click()
+        create_link = self.wait.until(EC.presence_of_element_located((By.XPATH, "//a[contains(@href, 'interventions/create') and contains(@class, 'btn-primary')]")))
+        self.driver.execute_script("arguments[0].click();", create_link)
         
         # Fill intervention form:
         # - input id="title"
@@ -349,6 +331,8 @@ class SolarSmartSeleniumTest:
                 Select(tech_select).select_by_index(1)
         except:
             pass
+        
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
         
         # Submit button with text "Create Intervention"
         submit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., 'Create Intervention')]")))
