@@ -43,32 +43,46 @@ class FaultSimulationController extends Controller
             'fault_type' => 'required|in:inverter_failure,panel_crack,wiring_fault,sensor_malfunction,hot_spot,delamination,connection_failure,soiling_severe,shading_issue,ground_fault',
         ]);
 
-        $panel = Panel::with('solarSystem')->findOrFail($validated['panel_id']);
+        try {
+            $panel = Panel::with('solarSystem')->findOrFail($validated['panel_id']);
 
-        $faultSimulation = $this->service->triggerFault($panel, $validated['fault_type'], auth()->id());
+            if (! $panel->solarSystem) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Panel does not belong to a solar system',
+                ], 422);
+            }
 
-        return response()->json([
-            'success' => true,
-            'message' => "Fault simulation triggered for panel {$panel->serial_number}",
-            'data' => [
-                'id' => $faultSimulation->id,
-                'panel' => [
-                    'id' => $panel->id,
-                    'serial_number' => $panel->serial_number,
-                    'model' => $panel->model,
-                    'status' => 'inactive',
+            $faultSimulation = $this->service->triggerFault($panel, $validated['fault_type'], auth()->id());
+
+            return response()->json([
+                'success' => true,
+                'message' => "Fault simulation triggered for panel {$panel->serial_number}",
+                'data' => [
+                    'id' => $faultSimulation->id,
+                    'panel' => [
+                        'id' => $panel->id,
+                        'serial_number' => $panel->serial_number,
+                        'model' => $panel->model,
+                        'status' => 'inactive',
+                    ],
+                    'fault' => [
+                        'type' => $faultSimulation->fault_type,
+                        'label' => $faultSimulation->faultTypeLabel(),
+                        'description' => $faultSimulation->fault_description,
+                        'severity' => $faultSimulation->severity,
+                    ],
+                    'alert_id' => $faultSimulation->generated_alert_id,
+                    'intervention_id' => $faultSimulation->generated_intervention_id,
+                    'triggered_at' => $faultSimulation->triggered_at,
                 ],
-                'fault' => [
-                    'type' => $faultSimulation->fault_type,
-                    'label' => $faultSimulation->faultTypeLabel(),
-                    'description' => $faultSimulation->fault_description,
-                    'severity' => $faultSimulation->severity,
-                ],
-                'alert_id' => $faultSimulation->generated_alert_id,
-                'intervention_id' => $faultSimulation->generated_intervention_id,
-                'triggered_at' => $faultSimulation->triggered_at,
-            ],
-        ], 201);
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function show(FaultSimulation $faultSimulation)

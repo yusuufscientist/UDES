@@ -182,16 +182,14 @@ class FaultSimulationService
             $technician = User::first();
         }
 
-        if (! $technician) {
-            throw new \RuntimeException('No users available in the system to assign the intervention');
-        }
+        $userId = $technician?->id ?? null;
 
         $title = self::FAULT_TYPES[$faultType]['label'];
 
         return Intervention::create([
             'solar_system_id' => $panel->solar_system_id,
             'panel_id' => $panel->id,
-            'technician_id' => $technician->id,
+            'technician_id' => $userId,
             'alert_id' => $alertId,
             'type' => $faultConfig['intervention_type'],
             'description' => "[AUTO-GENERATED] {$title} - Panel Serial: {$panel->serial_number}\n\n{$faultConfig['description']}\n\nThis intervention was automatically created by the Fault Simulation System.",
