@@ -53,7 +53,7 @@ class FaultSimulationController extends Controller
                 ], 422);
             }
 
-            $faultSimulation = $this->service->triggerFault($panel, $validated['fault_type'], auth()->id());
+            $faultSimulation = $this->service->triggerFault($panel, $validated['fault_type'], auth()->id() ?? null);
 
             return response()->json([
                 'success' => true,
