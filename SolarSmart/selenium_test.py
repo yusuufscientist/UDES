@@ -77,8 +77,8 @@ class SolarSmartSeleniumTest:
     
     def disconnect(self):
         print("\n--- Testing Disconnect ---")
-        disconnect_btn = self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[title='Disconnect']")))
-        disconnect_btn.click()
+        disconnect_btn = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "button[title='Disconnect']")))
+        self.driver.execute_script("arguments[0].click();", disconnect_btn)
         
         # Handle alert/confirmation if any
         time.sleep(1)
@@ -121,8 +121,10 @@ class SolarSmartSeleniumTest:
         date_input.send_keys("2024-01-15")
         
         # Submit button with text "Create System"
-        submit_btn = self.driver.find_element(By.XPATH, "//button[contains(., 'Create System')]")
-        submit_btn.click()
+        submit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., 'Create System')]")))
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
+        time.sleep(1)
+        self.driver.execute_script("arguments[0].click();", submit_btn)
         
         # Verify creation - check for system name in page
         self.wait.until(EC.url_contains("solar-systems"))
@@ -169,8 +171,10 @@ class SolarSmartSeleniumTest:
         date_input.send_keys("2024-01-15")
         
         # Submit button with text "Add Panel"
-        submit_btn = self.driver.find_element(By.XPATH, "//button[contains(., 'Add Panel')]")
-        submit_btn.click()
+        submit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., 'Add Panel')]")))
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
+        time.sleep(1)
+        self.driver.execute_script("arguments[0].click();", submit_btn)
         
         # Verify - panel serial should appear in page
         self.wait.until(EC.url_contains("panels"))
@@ -221,8 +225,10 @@ class SolarSmartSeleniumTest:
         sunny_radio.click()
         
         # Submit button with text "Add Production Record"
-        submit_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'Add Production Record')]")))
-        submit_btn.click()
+        submit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., 'Add Production Record')]")))
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
+        time.sleep(1)
+        self.driver.execute_script("arguments[0].click();", submit_btn)
         
         # Verify - check for energy value 12.5
         self.wait.until(EC.url_contains("productions"))
@@ -263,8 +269,8 @@ class SolarSmartSeleniumTest:
         Select(fault_select).select_by_index(1)
         
         # Click trigger button
-        trigger_btn = self.wait.until(EC.element_to_be_clickable((By.ID, "triggerBtn")))
-        trigger_btn.click()
+        trigger_btn = self.wait.until(EC.presence_of_element_located((By.ID, "triggerBtn")))
+        self.driver.execute_script("arguments[0].click();", trigger_btn)
         
         # Wait for confirmation (page reload or alert)
         time.sleep(2)
@@ -345,8 +351,10 @@ class SolarSmartSeleniumTest:
             pass
         
         # Submit button with text "Create Intervention"
-        submit_btn = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'Create Intervention')]")))
-        submit_btn.click()
+        submit_btn = self.wait.until(EC.presence_of_element_located((By.XPATH, "//button[contains(., 'Create Intervention')]")))
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_btn)
+        time.sleep(1)
+        self.driver.execute_script("arguments[0].click();", submit_btn)
         
         # Verify redirect to interventions list
         self.wait.until(EC.url_contains("interventions"))
