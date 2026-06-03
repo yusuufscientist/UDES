@@ -50,23 +50,9 @@
                         </div>
                     </div>
                     <div class="card-footer bg-transparent">
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ route('solar-systems.show', $system) }}" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-eye me-1"></i>View
-                            </a>
-                            <div>
-                                <a href="{{ route('solar-systems.edit', $system) }}" class="btn btn-outline-secondary btn-sm me-1">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <form action="{{ route('solar-systems.destroy', $system) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this system?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                        <a href="{{ route('solar-systems.show', $system) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-eye me-1"></i>View
+                        </a>
                     </div>
                 </div>
             </div>

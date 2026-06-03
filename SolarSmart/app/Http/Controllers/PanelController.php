@@ -13,8 +13,6 @@ class PanelController extends Controller
      */
     public function index(SolarSystem $solarSystem)
     {
-        $this->authorize('view', $solarSystem);
-
         $panels = $solarSystem->panels()->withCount('alerts')->get();
 
         return view('panels.index', compact('solarSystem', 'panels'));
@@ -25,8 +23,6 @@ class PanelController extends Controller
      */
     public function create(SolarSystem $solarSystem)
     {
-        $this->authorize('update', $solarSystem);
-
         return view('panels.create', compact('solarSystem'));
     }
 
@@ -35,8 +31,6 @@ class PanelController extends Controller
      */
     public function store(Request $request, SolarSystem $solarSystem)
     {
-        $this->authorize('update', $solarSystem);
-
         $validated = $request->validate([
             'serial_number' => ['required', 'string', 'max:255', 'unique:panels'],
             'model' => ['required', 'string', 'max:255'],
@@ -61,8 +55,6 @@ class PanelController extends Controller
      */
     public function show(SolarSystem $solarSystem, Panel $panel)
     {
-        $this->authorize('view', $solarSystem);
-
         $panel->load(['productions' => function ($query) {
             $query->latest()->take(30);
         }, 'alerts' => function ($query) {
@@ -84,8 +76,6 @@ class PanelController extends Controller
      */
     public function edit(SolarSystem $solarSystem, Panel $panel)
     {
-        $this->authorize('update', $solarSystem);
-
         return view('panels.edit', compact('solarSystem', 'panel'));
     }
 
@@ -94,8 +84,6 @@ class PanelController extends Controller
      */
     public function update(Request $request, SolarSystem $solarSystem, Panel $panel)
     {
-        $this->authorize('update', $solarSystem);
-
         $validated = $request->validate([
             'serial_number' => ['required', 'string', 'max:255', 'unique:panels,serial_number,'.$panel->id],
             'model' => ['required', 'string', 'max:255'],
@@ -117,8 +105,7 @@ class PanelController extends Controller
      */
     public function destroy(SolarSystem $solarSystem, Panel $panel)
     {
-        $this->authorize('update', $solarSystem);
-
+        \Illuminate\Support\Facades\Log::info('Panel destroy hit', ['panel' => $panel->id, 'solar_system' => $solarSystem->id]);
         $panel->delete();
 
         return redirect()->route('solar-systems.panels.index', $solarSystem)
@@ -130,8 +117,6 @@ class PanelController extends Controller
      */
     public function updateReadings(Request $request, SolarSystem $solarSystem, Panel $panel)
     {
-        $this->authorize('update', $solarSystem);
-
         $validated = $request->validate([
             'current_voltage' => ['required', 'numeric', 'min:0'],
             'current_amperage' => ['required', 'numeric', 'min:0'],

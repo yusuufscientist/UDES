@@ -14,14 +14,11 @@ class ProductionController extends Controller
      */
     public function index(SolarSystem $solarSystem)
     {
-        $this->authorize('view', $solarSystem);
-
         $productions = $solarSystem->productions()
             ->with('panel')
             ->latest()
             ->paginate(30);
 
-        // Calculate statistics
         $stats = [
             'total_production' => $solarSystem->productions()->sum('energy_produced_kwh'),
             'avg_daily' => $solarSystem->productions()->avg('energy_produced_kwh'),
@@ -32,23 +29,15 @@ class ProductionController extends Controller
         return view('productions.index', compact('solarSystem', 'productions', 'stats'));
     }
 
-    /**
-     * Show the form for creating a new production record
-     */
     public function create(SolarSystem $solarSystem)
     {
-        $this->authorize('update', $solarSystem);
         $panels = $solarSystem->panels()->where('status', 'active')->get();
 
         return view('productions.create', compact('solarSystem', 'panels'));
     }
 
-    /**
-     * Store a newly created production record
-     */
     public function store(Request $request, SolarSystem $solarSystem)
     {
-        $this->authorize('update', $solarSystem);
 
         $validated = $request->validate([
             'panel_id' => ['nullable', 'exists:panels,id'],
@@ -84,28 +73,18 @@ class ProductionController extends Controller
      */
     public function show(SolarSystem $solarSystem, Production $production)
     {
-        $this->authorize('view', $solarSystem);
-
         return view('productions.show', compact('solarSystem', 'production'));
     }
 
-    /**
-     * Show the form for editing the specified production record
-     */
     public function edit(SolarSystem $solarSystem, Production $production)
     {
-        $this->authorize('update', $solarSystem);
         $panels = $solarSystem->panels()->where('status', 'active')->get();
 
         return view('productions.edit', compact('solarSystem', 'production', 'panels'));
     }
 
-    /**
-     * Update the specified production record
-     */
     public function update(Request $request, SolarSystem $solarSystem, Production $production)
     {
-        $this->authorize('update', $solarSystem);
 
         $validated = $request->validate([
             'panel_id' => ['nullable', 'exists:panels,id'],
@@ -131,21 +110,14 @@ class ProductionController extends Controller
      */
     public function destroy(SolarSystem $solarSystem, Production $production)
     {
-        $this->authorize('update', $solarSystem);
-
         $production->delete();
 
         return redirect()->route('solar-systems.productions.index', $solarSystem)
             ->with('success', 'Production record deleted successfully.');
     }
 
-    /**
-     * Get production data for charts (API endpoint)
-     */
     public function chartData(SolarSystem $solarSystem, Request $request)
     {
-        $this->authorize('view', $solarSystem);
-
         $period = $request->get('period', 'week'); // week, month, year
 
         $data = match ($period) {

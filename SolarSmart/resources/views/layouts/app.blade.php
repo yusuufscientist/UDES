@@ -838,46 +838,15 @@
                 <a href="{{ route('interventions.index') }}">{{ __('Interventions') }}</a>
               </li>
 <li class="menu-item {{ request()->routeIs('fault-simulations.*', 'solar-systems.fault-simulations.*') ? 'active' : '' }}">
-                 <a href="{{ route('fault-simulations.index') }}">{{ __('Fault Simulations') }}</a>
-               </li>
-               @auth
-              <li class="menu-item user-section">
-                <a class="user-dropdown dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                  <div class="d-inline-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #2563EB);">
-                    <i class="bi bi-person-fill text-white"></i>
-                  </div>
-                  <span>{{ auth()->user()->name }}</span>
-                </a>
-                <ul class="sub-menu dropdown-menu dropdown-menu-end" style="opacity: 0; visibility: hidden; transform: translateY(10px);">
-                  <li><span class="dropdown-item-text">
-                    <i class="bi bi-person-badge me-2 text-warning"></i>{{ ucfirst(auth()->user()->role) }}
-                  </span></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                      @csrf
-                      <button type="submit" class="dropdown-item">
-                        <i class="bi bi-box-arrow-right me-2 text-danger"></i>Logout
-                      </button>
-                    </form>
-                  </li>
-                </ul>
-</li>
-               @endauth
-               <!-- Theme Toggle -->
-               <li class="menu-item">
-                 <button id="themeToggle" class="nav-link btn btn-link" title="Toggle dark mode">
-                   <i class="bi bi-moon-stars"></i>
-                 </button>
-               </li>
-@guest
-              <li class="menu-item">
-                <a href="{{ route('login') }}">{{ __('Login') }}</a>
-              </li>
-              <li class="menu-item">
-                <a href="{{ route('register') }}">{{ __('Register') }}</a>
-              </li>
-              @endguest
+                  <a href="{{ route('fault-simulations.index') }}">{{ __('Fault Simulations') }}</a>
+                </li>
+                <!-- Theme Toggle -->
+                <li class="menu-item">
+                  <button id="themeToggle" class="nav-link btn btn-link" title="Toggle dark mode">
+                    <i class="bi bi-moon-stars"></i>
+                  </button>
+                </li>
+              
             </ul>
           </div>
         </div>
@@ -908,13 +877,11 @@
         </div>
     </div>
 
-    @auth
     <footer class="footer mt-auto">
         <div class="container">
             <p class="mb-0">&copy; {{ date('Y') }} <span class="text-warning">SolarSmart</span> - Solar Energy Monitoring System</p>
         </div>
     </footer>
-    @endauth
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

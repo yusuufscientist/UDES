@@ -14,7 +14,12 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
+        // Use a default user if not authenticated
+        $user = Auth::check() ? Auth::user() : \App\Models\User::where('email', 'fcyusuuf@gmail.com')->first();
+        
+        if (!$user) {
+            $user = \App\Models\User::first();
+        }
 
         // Get user's solar systems
         $solarSystems = $user->solarSystems()->with(['panels', 'productions', 'alerts'])->get();

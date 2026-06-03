@@ -5,6 +5,9 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h2">Interventions</h1>
+    <a href="{{ route('interventions.create') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-2"></i>Add Intervention
+    </a>
 </div>
 
 <div class="card">

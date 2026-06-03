@@ -44,6 +44,11 @@
                             <td>
                                 <a href="{{ route('solar-systems.panels.show', [$solarSystem, $panel]) }}" class="btn btn-sm btn-info">View</a>
                                 <a href="{{ route('solar-systems.panels.edit', [$solarSystem, $panel]) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <form action="{{ route('solar-systems.panels.destroy', [$solarSystem, $panel]) }}" method="POST" class="d-inline panel-delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                </form>
                                 @if($panel->status === 'active')
                                     <button class="btn btn-sm btn-outline-danger fault-trigger-btn" data-panel-id="{{ $panel->id }}" data-serial="{{ $panel->serial_number }}">
                                         <i class="bi bi-bug"></i>
@@ -158,6 +163,33 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('faultSimulationModal').addEventListener('hidden.bs.modal', function() {
         confirmBtn.disabled = false;
         confirmBtn.textContent = 'Trigger Fault';
+    });
+
+    document.querySelectorAll('.panel-delete-form').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!confirm('Delete this panel?')) return;
+            var formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content'),
+                    'Accept': 'text/html'
+                },
+                body: formData,
+                credentials: 'same-origin'
+            }).then(function(response) {
+                if (response.ok || response.status === 302) {
+                    window.location.reload();
+                } else {
+                    return response.text().then(function(text) {
+                        throw new Error('Delete failed: ' + response.status + ' - ' + text.substring(0, 200));
+                    });
+                }
+            }).catch(function(err) {
+                alert(err.message);
+            });
+        });
     });
 });
 </script>

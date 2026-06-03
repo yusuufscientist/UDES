@@ -54,8 +54,8 @@
 
                         <div class="col-md-4 mb-3">
                             <label for="latitude" class="form-label">Latitude</label>
-                            <input type="number" step="0.00000001" class="form-control @error('latitude') is-invalid @enderror"
-                                   id="latitude" name="latitude" value="{{ old('latitude') }}">
+<input type="text" class="form-control @error('latitude') is-invalid @enderror"
+                                   id="latitude" name="latitude" value="{{ old('latitude') }}" placeholder="36.123">
                             @error('latitude')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -65,8 +65,8 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="longitude" class="form-label">Longitude</label>
-                            <input type="number" step="0.00000001" class="form-control @error('longitude') is-invalid @enderror"
-                                   id="longitude" name="longitude" value="{{ old('longitude') }}">
+<input type="text" class="form-control @error('longitude') is-invalid @enderror"
+                                     id="longitude" name="longitude" value="{{ old('longitude') }}" placeholder="2.456">
                             @error('longitude')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
