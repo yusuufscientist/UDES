@@ -98,13 +98,16 @@ class FaultSimulationService
             ]);
 
             $alertService = app(AlertService::class);
-            $alert = $alertService->createPanelFaultAlert($panel, "{$faultConfig['label']}: {$faultConfig['description']}");
+            if ($panel->solarSystem) {
+                $alert = $alertService->createPanelFaultAlert($panel, "{$faultConfig['label']}: {$faultConfig['description']}");
+                $faultSimulation->update(['generated_alert_id' => $alert->id]);
+            }
 
-            $faultSimulation->update(['generated_alert_id' => $alert->id]);
+            $intervention = $this->createIntervention($panel, $faultType, $faultConfig, $faultSimulation->generated_alert_id ?? null);
 
-            $intervention = $this->createIntervention($panel, $faultType, $faultConfig, $alert->id);
-
-            $faultSimulation->update(['generated_intervention_id' => $intervention->id]);
+            if ($intervention) {
+                $faultSimulation->update(['generated_intervention_id' => $intervention->id]);
+            }
 
             return $faultSimulation->fresh(['generatedAlert', 'generatedIntervention']);
         });
@@ -167,7 +170,7 @@ class FaultSimulationService
         })->values()->toArray();
     }
 
-    protected function createIntervention(Panel $panel, string $faultType, array $faultConfig, int $alertId): Intervention
+    protected function createIntervention(Panel $panel, string $faultType, array $faultConfig, ?int $alertId): ?Intervention
     {
         $technician = User::where('role', 'technician')
             ->where('is_active', true)

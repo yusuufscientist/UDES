@@ -26,6 +26,15 @@ class Controller extends BaseController
         return true;
     }
 
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation error',
+            'errors' => $validator->errors()->all(),
+        ], 422);
+    }
+
     public function callAction($method, $parameters)
     {
         if (! method_exists($this, $method)) {

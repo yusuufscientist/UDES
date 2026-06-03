@@ -32,6 +32,7 @@ class Intervention extends Model
         'completed_date' => 'date',
         'cost' => 'decimal:2',
         'duration_minutes' => 'integer',
+        'technician_id' => 'integer',
     ];
 
     /**

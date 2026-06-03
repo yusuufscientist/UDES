@@ -85,6 +85,13 @@ class FaultSimulationController extends Controller
         try {
             $panel = Panel::with('solarSystem')->findOrFail($validated['panel_id']);
 
+            if (! $panel->solarSystem) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Panel does not belong to a solar system',
+                ], 422);
+            }
+
             $faultSimulation = $this->service->triggerFault($panel, $validated['fault_type'], $this->currentUserId());
 
             return response()->json([
@@ -101,8 +108,8 @@ class FaultSimulationController extends Controller
                     'label' => $faultSimulation->faultTypeLabel(),
                     'severity' => $faultSimulation->severity,
                 ],
-                'alert_id' => $faultSimulation->generated_alert_id,
-                'intervention_id' => $faultSimulation->generated_intervention_id,
+                'alert_id' => $faultSimulation->generated_alert_id ?? null,
+                'intervention_id' => $faultSimulation->generated_intervention_id ?? null,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
