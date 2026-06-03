@@ -1,6 +1,6 @@
 FROM php:8.2-fpm
 
-# تثبيت حزم النظام الأساسية و Nginx
+# تثبيت حزم النظام الأساسية، Nginx، بالإضافة إلى Node.js و NPM لبناء الـ Assets
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -9,7 +9,9 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    nginx
+    nginx \
+    nodejs \
+    npm
 
 # تنظيف الكاش
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -27,6 +29,9 @@ COPY . /var/www
 
 # تثبيت مكتبات Composer للإنتاج
 RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# تثبيت حزم NPM وبناء ملفات الـ CSS والـ JS (Vite / Tailwind)
+RUN npm install && npm run build
 
 # ضبط الصلاحيات لمجلدات السيرفر
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
