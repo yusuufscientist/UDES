@@ -16,9 +16,42 @@ class DashboardController extends Controller
     {
         // Use a default user if not authenticated
         $user = Auth::check() ? Auth::user() : \App\Models\User::where('email', 'fcyusuuf@gmail.com')->first();
-        
+
         if (!$user) {
             $user = \App\Models\User::first();
+        }
+
+        // Ensure we have a valid user before proceeding
+        if (!$user) {
+            $solarSystems = collect([]);
+            $solarSystem = null;
+            $totalSystems = 0;
+            $totalPanels = 0;
+            $activePanels = 0;
+            $totalCapacity = 0;
+            $todayProduction = 0;
+            $monthProduction = 0;
+            $activeAlerts = collect([]);
+            $productionChartData = ['labels' => [], 'data' => []];
+            $monthlyChartData = ['labels' => [], 'data' => []];
+            $weatherData = $this->getWeatherData();
+            $productions = collect([]);
+
+            return view('dashboard.index', compact(
+                'solarSystems',
+                'solarSystem',
+                'totalSystems',
+                'totalPanels',
+                'activePanels',
+                'totalCapacity',
+                'todayProduction',
+                'monthProduction',
+                'activeAlerts',
+                'productionChartData',
+                'monthlyChartData',
+                'weatherData',
+                'productions'
+            ));
         }
 
         // Get user's solar systems
