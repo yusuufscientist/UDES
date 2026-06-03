@@ -28,3 +28,5 @@ EXPOSE 80
 # 8. أمر التشغيل النهائي
 # تأكد أن `php artisan migrate` ما راحش يحبس الـ Container إذا كانت الداتا بيس واجدة
 CMD php artisan migrate --force && php-fpm -D && nginx -g "daemon off;"
+# ... بعد سطر CMD اللي عندك
+CMD php artisan config:cache && php artisan migrate --force && php-fpm -D && nginx -g "daemon off;"
